@@ -1,0 +1,15 @@
+ # RewriteBase /slimg/ 
+
+ #  # test string is a valid files
+ #  RewriteCond %{SCRIPT_FILENAME} !-f
+ #  # test string is a valid directory
+ #  RewriteCond %{SCRIPT_FILENAME} !-d
+
+ #  RewriteRule ^(.*)$   index.php?uri=/$1    [NC,L,QSA]
+
+# RewriteBase /slimg/
+# Redirect 301 ^(.*)$ http://rooturaj.com
+
+# Options +FollowSymLinks
+# RewriteEngine On
+# RewriteRule ^(.*)$ index.php [NC,L]
