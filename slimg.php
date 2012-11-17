@@ -22,9 +22,7 @@ class Router {
     public $params;
     public $route_found = FALSE;
     
-    public $default_id = NULL;
-    public $default_action = 'index';
-    public $default_controller = 'home';
+    public $defaults;
     
     public function __construct($url)
     {
@@ -36,6 +34,11 @@ class Router {
         if(($pos = strpos($url, '?'))) $url = substr($url, 0, $pos);
         $this->request = $url;
         $this->routes = array();
+        $this->defaults = array(
+            'controller' => 'home',
+            'action' =>'list',
+            'id'=>NULL
+        );
     }
     
     public function map($rule, $target = array(), $conditions = array())
@@ -45,30 +48,23 @@ class Router {
     public function set_route($route)
     {
         $this->route_found = TRUE;
-        echo "*************************************<br/>";
-        print_r($route->params)."<br/>";
-        print_r($route->target)."<br/>";
+        echo "*************************************<br/>Params: ";
+        echo print_r($route->params)."<br/>Target: ";
+        echo print_r($route->target)."<br/>";
         
         
-        $params = $this->params;
+        $params = $this->params = $route->params;
         
         if(isset($route->params['controller'])) $this->controller = $route->params['controller'];
         if(isset($route->params['action'])) $this->action = $route->params['action'];
         if(isset($route->params['id'])) $this->id = $route->params['id'];
         
-        echo "Params: ".$params['controller']."<br/>";
-        echo "Controller: ".$this->controller."<br/>";
-        
-        // unset($params['controller']);    
-        // unset($params['action']);    
-        // unset($params['id']);
-        
         if(count($_GET))
             $this->params = array_merge($params, $_GET);
         
-        if(empty($this->controller)) $this->controller = $this->default_controller;
-        if(empty($this->action)) $this->action = $this->default_action;
-        if(empty($this->id)) $this->id = $this->default_id;
+        if(empty($this->controller)) $this->controller = $this->defaults['controller'];
+        if(empty($this->action)) $this->action = $this->defaults['action'];
+        if(empty($this->id)) $this->id = $this->defaults['id'];
         
         $w = explode('_', $this->controller);
         foreach($w as $k => $v) $w[$k] = ucfirst($v);
@@ -77,6 +73,15 @@ class Router {
         echo "*************************************<br/>";
     }
     
+    public function setProps($key, $default)
+    {
+        // if(is_strin)
+    }
+    
+    public function getParam($key, $default = NULL)
+    {
+        
+    }
     
     public function default_routes()
     {
@@ -87,9 +92,11 @@ class Router {
     
     public function run()
     {
+        // $this->default_routes();
+           
         foreach($this->routes as $route)
         {
-            if($route->is_match)
+            if($route->matches)
             {
                 $this->set_route($route);
                 break;
@@ -99,14 +106,8 @@ class Router {
 }
 
 class Route {
-    // const shorcuts = array(
-            // ':all' => '(.*)',
-            // ':word' => '(\w+)',
-            // ':number' => '([0-9]+)',
-            // ':alpha' => '([a-zA-Z0-9-_]+)',
-            // );
     public $shorcuts;        
-    public $is_match = FALSE;
+    public $matches = FALSE;
     public $params;
     public $url;
     private $_conditions;
@@ -120,6 +121,8 @@ class Route {
     
     public function compile($url, $request)
     {
+        echo "..................<br/>Compile!<br/>";
+        
         $names  = array();
         $values = array();
         
@@ -127,20 +130,26 @@ class Route {
         
         preg_match_all('#:([\w+]+)#', $url, $names, PREG_PATTERN_ORDER);
         $names = $names[0];
-    
+        
+        #### TRANSFORMATIONS:
+        #TODO: Allow for <name:options> => (?P<name>options)
+        #TODO: Allow for optional /:controller(/:action) => /:controller(/:action)?
         $callback = array($this,'_clean_pattern');
         $pattern = preg_replace_callback('#:([\w-]+)#', $callback, $url);//.'/?';
         
-        if(preg_match("#^\/?{$pattern}/?$#", $request, $values))
+        if(preg_match("#^\/?{$pattern}\/?$#", $request, $values))
         {
+            echo "<br/>".print_r($values)."<br/>";     
             array_shift($values);
+            echo "<br/>".print_r($values)."<br/>";
             
-            foreach($names as $index => $value) 
-                $this->params[substr($value, 1)] = urldecode($values[$index]);
-            foreach ($this->target as $key => $value)
+            foreach($names as $index => $value){
+                echo "KK: {$index}:{$value}<br/>";
+                $this->params[$value] = urldecode($values[$index]);}
+            foreach($this->target as $key => $value)
                 $this->params[$key] = $value;
             
-            $this->is_match = TRUE;
+            $this->matches = TRUE;
         }
     }
     
@@ -155,21 +164,23 @@ class Route {
             ':word' => '(\w+)',
             ':number' => '([0-9]+)',
             ':segment'=>'[^/]*',
-            ':alpha' => '([a-zA-Z0-9-_]+)',
+            ':segments' => '[a-z0-9\-\_\/]+',
+            ':alpha' => '([a-zA-Z-_]+)',
         );
     }
     
     private function _clean_pattern($matches)
     {   
         $key = $matches[1];
+        
+        $conditions = "[a-zA-Z0-9_\-\.\!\~\*\\\'\(\)\:\@\&\=\$\+,%]+";
+        
         if(array_key_exists($key, $this->_conditions))
         {
-            $out = '(?P<'.$key.'>'.$this->_conditions[$key].')';
+            $conditions = $this->_conditions[$key];
         }
-        else
-        {
-            $out = "(?P<{$key}>[a-zA-Z0-9_\-\.\!\~\*\\\'\(\)\:\@\&\=\$\+,%]+)";   
-        }
+        
+        $out = "(?P<{$key}>{$conditions})";  
         return $out;
     }
     
