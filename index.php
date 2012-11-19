@@ -1,47 +1,33 @@
 <?php 
-require_once('./slimg.php');
+require_once('./lib/slimg.php');
+require_once('./tests/vendors/FUnit.php');
 
-#REQUEST
-echo "Request: ".$_SERVER['REQUEST_URI']."<br/>";
-# Get actual rerouted URL.
-$uri = $_SERVER['REQUEST_URI'];
-
-$request = explode('/', $uri);
-
-$script  = explode('/', $_SERVER['SCRIPT_NAME']);  
-echo "Request is:".print_r($request)."<br/>";
-echo "Script is: ".print_r($script)."<br/>";
-
-#Get method
-//array("GET","POST","PUT","DELETE", "HEAD");
-$m = array_key_exists('REQUEST_METHOD', $_SERVER) ? $_SERVER['REQUEST_METHOD'] : NULL;
-#Hack on browsers not attaching PUT/DELETE.
-if($m == "POST" && array_key_exists('_m', $_POST)) 
-    $m = strtoupper($env['POST']['_m']);
-echo "Request method is: $m <br/>";
+$profiler = new Profiler();
+$profiler->start();
 
 #ROUTER
 $slim = new SlimG();
 
-$slim->render();
 
-echo "<br/><ul>";
-echo "<li><a href='/users'>Users empty</a></li>";
-echo "<li><a href='/users/'>Users empty trailing slash</a></li>";
-echo "<li><a href='/users/32'>Users 32</a></li>";
-echo "<li><a href='/users/view/32'>Users action id</a></li>";
-echo "<li><a href='/users/named/parameter'>Users named param</a></li>";
-echo "</ul><hr/>";
 
-$r = new Router($uri); // create router instance 
+$r = $slim->router; // create router instance 
+$r->addListener("/:controller/:action/:pepe(?:/([\d]{1,4}))?", function($slim) use ($slim){
+    echo "This is just maaaagik!<br/>";    
+    echo "I've been fucking callbacked!<br/>".$slim->kk;
+    print_r($slim->request);
+});
+$r->addListener('/', function(){
+  echo "kk";  
+});
 
-$r->map('/', array('controller' => 'home')); // main page will call controller "Home" with method "index()"
-$r->map('/users(/:alpha)?', array('controller' => 'user', 'action' => 'listing'));
-$r->map('/users/:word/:number/:segments', array('controller' => 'user', 'action' => 'peperone'));
-$r->map('all-users/:word/:number/:all', array('controller' => 'user', 'action' => 'signup'));
-$r->map('/:controller/:action/:pepe', array('controller' => 'profile')); // will call controller "Profile" with dynamic method ":action()"
-$r->map('blog/:year/:month/:id', array('controller' => 'users')); // define filters for the url parameters
-$r->map('/users/:id', array('controller' => 'users')); // define filters for the url parameters
+$r->get( '/', array('controller' => 'home')); // main page will call controller "Home" with method "index()"
+$r->get( 'users', array('controller' => 'user', 'action' => 'actionA'));
+$r->get( 'users(/:alpha)?', array('controller' => 'user', 'action' => 'actionB'));
+$r->get( '/users/:word/:number/:segment', array('controller' => 'user', 'action' => 'peperone'));
+$r->get( 'all-users/:word/:number/:all', array('controller' => 'user', 'action' => 'signup'));
+$r->get( '/:controller/:action/:pepe(?:/([\d]{1,4}))?', array('controller' => 'profile')); // will call controller "Profile" with dynamic method ":action()"
+$r->get( 'blog/:year/:month/:id', array('controller' => 'users')); // define filters for the url parameters
+$r->get( '/users/:id', array('controller' => 'users'), array('id'=>'[\d]{1,4}')); // define filters for the url parameters
  
 $r->run();
 
@@ -52,3 +38,5 @@ echo "------<br/>";
 print_r($r->params);
 echo "------<br/>";
 
+echo  $profiler->stop("Page render", Profiler::TYPE_PLAIN, true);
+$slim->render();
