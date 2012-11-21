@@ -32,6 +32,7 @@ echo "<li><a href='/users/'>Users empty trailing slash</a></li>";
 echo "<li><a href='/users/32'>Users 32</a></li>";
 echo "<li><a href='/users/view/32'>Users action id</a></li>";
 echo "<li><a href='/users/named/parameter'>Users named param</a></li>";
+echo "<li><a href='/blog/tags/parameter'>Blog tAg</a></li>";
 echo "</ul><hr/>";
 ?>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>

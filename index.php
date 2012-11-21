@@ -2,9 +2,6 @@
 require_once('./lib/slimg.php');
 require_once('./tests/vendors/FUnit.php');
 
-$profiler = new Profiler();
-$profiler->start();
-
 #ROUTER
 $slim = new SlimG();
 
@@ -13,15 +10,42 @@ $slim = new SlimG();
 $r = $slim->router; // create router instance 
 $r->addListener("/:controller/:action/:pepe(?:/([\d]{1,4}))?", function($slim) use ($slim){
     echo "This is just maaaagik!<br/>";    
-    echo "I've been fucking callbacked!<br/>".$slim->kk;
+    echo "I've been fucking callbacked!<br/>".$slim->name;
     print_r($slim->request);
 });
 $r->addListener('/', function(){
   echo "kk";  
 });
 
-$r->get( '/', array('controller' => 'home')); // main page will call controller "Home" with method "index()"
-$r->get( 'users', array('controller' => 'user', 'action' => 'actionA'));
+//Routes:
+//pages. =====> site controller.
+//     |-index.
+//     |-about.
+//     |-legal.
+//     |-open source, project.
+//     |-downloads.
+//     |-contact.
+//blog  ======> yoto controller.
+//blog/article-slug
+//blog/archives
+//blog/archives/year
+//blog/archives/year/month
+//blog/archives/year/month/day
+//api   ======> api controller.
+//api/page-slug
+//api/article-slug
+//api/archives
+//api/archives/year
+//api/archives/year/month
+//api/archives/year/month/day
+$r->get('/', array('controller' => 'site', 'action'=>'index')); // main page will call controller "Home" with method "index()"
+$r->get('/:slug', array('controller' => 'site', 'action' => 'page'));
+$r->get('blog/:slug', array('controller' => 'yoto', 'action' => 'index'));
+$r->get('blog/archives(/:year(/:month(/:day)))', array('controller' => 'yoto', 'action' => 'archives'));
+$r->get('blog/tags(/:slug)', array('controller' => 'yoto', 'action' => 'tags'));
+$r->get('(?:(?P<controller>[^/.,;?\n]++)(?:/(?P<action>[^/.,;?\n]++)(?:/(?P<id>[^/.,;?\n]++))?)?)?', array('controller' => 'yoto', 'action' => 'index'));
+
+$r->get('users', array('controller' => 'user', 'action' => 'actionA'));
 $r->get( 'users(/:alpha)?', array('controller' => 'user', 'action' => 'actionB'));
 $r->get( '/users/:word/:number/:segment', array('controller' => 'user', 'action' => 'peperone'));
 $r->get( 'all-users/:word/:number/:all', array('controller' => 'user', 'action' => 'signup'));
@@ -30,6 +54,7 @@ $r->get( 'blog/:year/:month/:id', array('controller' => 'users')); // define fil
 $r->get( '/users/:id', array('controller' => 'users'), array('id'=>'[\d]{1,4}')); // define filters for the url parameters
  
 $r->run();
+$slim->render();
 
 echo "Controller: ".$r->controller."<br/>";
 echo "Action: ".$r->action."<br/>";
@@ -37,6 +62,3 @@ echo "Id: ".$r->id."<br/><hr/>";
 echo "------<br/>";
 print_r($r->params);
 echo "------<br/>";
-
-echo  $profiler->stop("Page render", Profiler::TYPE_PLAIN, true);
-$slim->render();
