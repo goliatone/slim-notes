@@ -145,8 +145,9 @@ class Router {
     {
         $routes = $this->routes[$this->request->method];
         foreach($routes as $route) {
-            if(!$route->matched) continue;
+            if(!$route->matched){ echo "NOT ".$route->pattern."<br/>";continue;}
             $this->_route($route);
+            echo "YES<br/>";
             return $this;
         }
         
@@ -166,6 +167,16 @@ class Router {
 }
  
 class Route {
+    
+    // Defines the pattern of a <segment>
+    const REGEX_KEY     = '<([a-zA-Z0-9_]++)>';
+
+    // What can be part of a <segment> value
+    const REGEX_SEGMENT = '[^/.,;?\n]++';
+
+    // What must be escaped in the route regex
+    const REGEX_ESCAPE  = '[.\\+*?[^\\]${}=!|]';
+    
     public $matched = FALSE;
     public $params;
     public $url;
@@ -197,9 +208,21 @@ class Route {
                 ':segments' => '[a-z0-9\-\_\/]+',
                 ':alpha' => '([a-zA-Z-_]+)',
             );
+        
+        #make optional parts non capturing.
+        if (strpos($url, '(') !== FALSE)
+        {
+            // Make optional parts of the URI non-capturing and optional
+            $url = str_replace(array('(', ')'), array('(?:', ')?'), $url);
+        }
             
         #replace all sugar named regexes:
         $pattern = strtr($url, $this->shorcuts);
+        
+        // Insert default regex for keys
+        $pattern = str_replace(array('<', '>'), array('(?P<', '>'.Route::REGEX_SEGMENT.')'), $pattern);
+        
+        // $pattern = preg_replace('#'.Route::REGEX_ESCAPE.'#', '\\\\$0', $pattern);
         
         preg_match_all('#:([\w]+)#', $pattern, $names, PREG_PATTERN_ORDER);
         $names = $names[1];
@@ -220,8 +243,10 @@ class Route {
             
             //Loop over named matches
             foreach($names as $index => $value) $this->params[$value] = $values[$value];
+            
             $this->matched = TRUE;
             
+            echo "We have a maching fucker!<Br/>";
             echo htmlentities($pattern)."<br/>Params:<br/> ";
             echo "<br/>".print_r($this->params);
         }

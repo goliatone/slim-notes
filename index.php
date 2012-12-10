@@ -16,6 +16,9 @@ $r->addListener("/:controller/:action/:pepe(?:/([\d]{1,4}))?", function($slim) u
 $r->addListener('/', function(){
   echo "kk";  
 });
+$r->addListener('blog/tags(/:slug)', function(){
+    echo "kk";
+});
 
 //Routes:
 //pages. =====> site controller.
@@ -43,15 +46,15 @@ $r->get('/:slug', array('controller' => 'site', 'action' => 'page'));
 $r->get('blog/:slug', array('controller' => 'yoto', 'action' => 'index'));
 $r->get('blog/archives(/:year(/:month(/:day)))', array('controller' => 'yoto', 'action' => 'archives'));
 $r->get('blog/tags(/:slug)', array('controller' => 'yoto', 'action' => 'tags'));
-$r->get('(?:(?P<controller>[^/.,;?\n]++)(?:/(?P<action>[^/.,;?\n]++)(?:/(?P<id>[^/.,;?\n]++))?)?)?', array('controller' => 'yoto', 'action' => 'index'));
+$r->get('(<controller>(/<action>(/<id>)))', array('controller' => 'yoto', 'action' => 'index'));
 
-$r->get('users', array('controller' => 'user', 'action' => 'actionA'));
-$r->get( 'users(/:alpha)?', array('controller' => 'user', 'action' => 'actionB'));
-$r->get( '/users/:word/:number/:segment', array('controller' => 'user', 'action' => 'peperone'));
-$r->get( 'all-users/:word/:number/:all', array('controller' => 'user', 'action' => 'signup'));
-$r->get( '/:controller/:action/:pepe(?:/([\d]{1,4}))?', array('controller' => 'profile')); // will call controller "Profile" with dynamic method ":action()"
-$r->get( 'blog/:year/:month/:id', array('controller' => 'users')); // define filters for the url parameters
-$r->get( '/users/:id', array('controller' => 'users'), array('id'=>'[\d]{1,4}')); // define filters for the url parameters
+// $r->get('users', array('controller' => 'user', 'action' => 'actionA'));
+// $r->get( 'users(/:alpha)', array('controller' => 'user', 'action' => 'actionB'));
+// $r->get( '/users/:word/:number/:segment', array('controller' => 'user', 'action' => 'peperone'));
+// $r->get( 'all-users/:word/:number/:all', array('controller' => 'user', 'action' => 'signup'));
+// $r->get( '/:controller/:action/:pepe(/<id>)', array('controller' => 'profile')); // will call controller "Profile" with dynamic method ":action()"
+// $r->get( 'blog/:year/:month/:id', array('controller' => 'users')); // define filters for the url parameters
+// $r->get( '/users/:id', array('controller' => 'users'), array('id'=>'[\d]{1,4}')); // define filters for the url parameters
  
 $r->run();
 $slim->render();
