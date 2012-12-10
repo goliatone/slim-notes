@@ -63,7 +63,7 @@ class Router {
             $this->routes[$method] = array();
         
         $this->callbacks = array();
-        $this->response = new Response();
+        $this->response  = new Response();
     }
     
     /**
@@ -74,7 +74,7 @@ class Router {
         // do we even need to process the routes that do not
         // match the request if $this->request->method !== $method return;
         if($this->request->method !== $method) return $this;
-        if(! $this->request->isValidMethod($method)) return $this;
+        if(! $this->request->is_valid_method($method)) return $this;
         
         $this->routes[$method][$rule] = new Route($rule, $this->request, $target, $conditions);
         
@@ -134,10 +134,27 @@ class Router {
         $this->callbacks[$url] = $callback;
     }
     
-    public function dispatch($url)
+    public function dispatch($url, $request, $reponse)
     {
+        if(isset($this->controller) &&
+           isset($this->action))
+        {
+            try
+            {
+                include_once('./controllers/'.$this->controller.'.php');
+                $action     = $this->action;
+                $controller = ucfirst($this->controller).'Controller';
+                $controller = new $controller($request, $reponse);
+                // $callback   = array($controller, $action);
+                //we should get rid of the first 3 arguments?!
+                // call_user_func_array($callback, $arguments);
+                $controller->$action();
+            }
+            catch(Exception $e){};    
+        }
+        
         if(! array_key_exists($url, $this->callbacks))
-            return $this->pageNotFound();
+            return $this->page_not_found('<p>We don\' have an actual listener!</p>');
         
         $arguments = func_get_args();
         array_shift($arguments);
@@ -157,7 +174,7 @@ class Router {
             return $this;
         }
         
-        $this->pageNotFound( );
+        $this->page_not_found('<p>End of Slimg::run method</p>');
         
         return $this;
     }
@@ -165,9 +182,9 @@ class Router {
     /**
      * 
      */
-    public function pageNotFound()
+    public function page_not_found($message = '')
     {
-       echo "<h2>Page Not Fucking Found!</h2><pre>";
+       echo "<h2>Page Not Found! :( </h2><pre>".$message;
        print_r($this->routes);
     }
 }
@@ -232,7 +249,7 @@ class Route {
         
         preg_match_all('#:([\w]+)#', $pattern, $names, PREG_PATTERN_ORDER);
         $names = $names[1];
-        $pattern = preg_replace_callback('#:[\w]+#', array($this, 'cleanUrl'), $pattern);
+        $pattern = preg_replace_callback('#:[\w]+#', array($this, 'clean_url'), $pattern);
         $pattern = "#^{$pattern}\/?$#uD";
         
         
@@ -260,7 +277,7 @@ class Route {
         $this->pattern = $pattern;
     }
  
-    public function cleanUrl($matches) {
+    public function clean_url($matches) {
         $key = str_replace(':', '', $matches[0]);
     
         $conditions = "[a-zA-Z0-9_\-\.\!\~\*\\\'\(\)\:\@\&\=\$\+,%]+";
@@ -319,12 +336,12 @@ class Request
         
     }
     
-    public function isValidMethod($method)
+    public function is_valid_method($method)
     {
         return in_array($method, self::$METHODS);
     }
     
-    public function isAJAX()
+    public function is_ajax()
     {
         $header = 'HTTP_X_REQUESTED_WITH';
         if(array_key_exists($header, $_SERVER) && 
