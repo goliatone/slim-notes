@@ -10,7 +10,7 @@ $slim = new SlimG();
 $r = $slim->router; // create router instance 
 $r->addListener("/:controller/:action/:pepe(?:/([\d]{1,4}))?", function($slim) use ($slim){
     echo "This is just maaaagik!<br/>";    
-    echo "I've been fucking callbacked!<br/>".$slim->name;
+    echo "I've been just callbacked!<br/>".$slim->name;
     print_r($slim->request);
 });
 $r->addListener('/', function(){

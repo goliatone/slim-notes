@@ -23,6 +23,12 @@ class SlimG extends View
         $this->router->run();
     }
     
+    /**
+     * We need to extrapolate controller/action to view files.
+     * - controller_dir
+     *  | action_view
+     *  | action_view
+     */
     public function render($filename = 'layout.php', $data = array())
     {
         #This we should get from the controller action, here
