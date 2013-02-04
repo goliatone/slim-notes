@@ -33,7 +33,7 @@ class SlimG extends View
     {
         #This we should get from the controller action, here
         #we only deal with the real deal, the layout.
-        $data['content'] = parent::render('articles.php');
+        $data['content'] = parent::render('article.php');
         $content = parent::render($filename, $data);
         $this->response->html($content);
     }
@@ -137,7 +137,8 @@ class Router {
     public function dispatch($url, $request, $reponse)
     {
         if(isset($this->controller) &&
-           isset($this->action))
+           isset($this->action)     &&
+           is_file('./controllers/'.$this->controller.'.php'))
         {
             try
             {

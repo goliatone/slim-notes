@@ -22,7 +22,7 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <?php echo $content;?>
+        <?php if(isset($content)) echo $content;?>
         
         <p>Hello world! This is HTML5 Boilerplate.</p>
         <?php
