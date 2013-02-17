@@ -3,7 +3,8 @@ require_once('./lib/slimg.php');
 require_once('./tests/vendors/FUnit.php');
 
 #ROUTER
-$slim = new SlimG();
+$base_url = '/slimg/';
+$slim = new SlimG($base_url);
 
 
 
@@ -41,7 +42,7 @@ $r->addListener('blog/tags(/:slug)', function(){
 //api/archives/year
 //api/archives/year/month
 //api/archives/year/month/day
-$r->get('/', array('controller' => 'site', 'action'=>'index')); // main page will call controller "Home" with method "index()"
+$r->get('/', function(){return 'pepe';}); // main page will call controller "Home" with method "index()"
 $r->get('/:slug', array('controller' => 'site', 'action' => 'page'));
 $r->get('blog/:slug', array('controller' => 'yoto', 'action' => 'index'));
 $r->get('blog/archives(/:year(/:month(/:day)))', array('controller' => 'yoto', 'action' => 'archives'));

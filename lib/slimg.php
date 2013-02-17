@@ -1,5 +1,8 @@
 <?php 
 
+/**
+ * 
+ */
 class SlimG extends View
 {
     public $router;
@@ -7,14 +10,14 @@ class SlimG extends View
     public $response;
     public $name = '<h2>SlimG Text</h2>';
     
-    public function __construct()
+    public function __construct($base_url = FALSE)
     {
-        $this->init();
+        $this->init($base_url);
     }   
     
-    public function init()
+    public function init($base_url)
     {
-        $this->request  = new Request();
+        $this->request  = new Request($base_url);
         $this->response = new Response();
         $this->router   = new Router($this->request);
     }
@@ -39,9 +42,12 @@ class SlimG extends View
     }
 }
 
-define('ROUTER_DEFAULT_CONTROLLER', 'home');
 define('ROUTER_DEFAULT_ACTION', 'index');
- 
+define('ROUTER_DEFAULT_CONTROLLER', 'home');
+
+/**
+ * 
+ */ 
 class Router {
     public $request;
     public $routes;
@@ -51,6 +57,8 @@ class Router {
     public $routed = FALSE;
     public $callbacks;
     public $response;
+    
+    
     public function __construct($request) {
         $this->reset($request);
     }
@@ -70,6 +78,9 @@ class Router {
      * 
      */
     public function map($method, $rule, $target = array(), $conditions = array()) {
+        //make sure we have the propper case.    
+        $method = strtoupper($method);
+        
         //TODO: We have the request at this point, 
         // do we even need to process the routes that do not
         // match the request if $this->request->method !== $method return;
@@ -86,20 +97,24 @@ class Router {
         // return $this->map(Request::GET, $rule, $target, $conditions);   
     // }
     
-    public function __call($name, $arguments)
+    public function __call($mehtod_name, $arguments)
     {
-        if(in_array(strtoupper($name), Request::$METHODS))
+        //If we call get/post/put/delete, then
+        if(in_array(strtoupper($mehtod_name), Request::$METHODS))
         {
-            array_unshift($arguments, strtoupper($name));
+            //add the method name to the args.
+            array_unshift($arguments, $mehtod_name);
+            
+            //call map, with the actual arguments.
             call_user_func_array(array($this, 'map'), $arguments);
         }
     }
  
-    public function default_routes() {
-        $this->map('/:controller');
-        $this->map('/:controller/:action');
-        $this->map('/:controller/:action/:id');
-    }
+    /*public function default_routes() {
+        $this->map('get', '/:controller');
+        $this->map('get', '/:controller/:action');
+        $this->map('get', '/:controller/:action/:id');
+    }*/
  
     private function _route($route) {
         $this->routed = TRUE;
@@ -271,7 +286,7 @@ class Route {
             $this->matched = TRUE;
             
             echo "We have a maching fucker!<Br/>";
-            echo htmlentities($pattern)."<br/>Params:<br/> ";
+            echo htmlentities($url)."<br/>Params:<br/> ";
             echo "<br/>".print_r($this->params);
         }
         
@@ -310,9 +325,15 @@ class Request
 	public $uri;
     public $method;
     public $params;
+    public $base_url;
     
-	function __construct() {
+    /**
+     * 
+     */
+	public function __construct($base_url = FALSE) {
+	   $this->base_url = $base_url;
 	   $this->init();
+       
 	}
     
     public function init()
@@ -322,6 +343,7 @@ class Request
         #Build uri, clean querystring.
         $uri = $_SERVER['REQUEST_URI'];
         if(($pos = strpos($uri, '?'))) $uri = substr($uri, 0, $pos);
+        if($this->base_url) $uri = str_replace($this->base_url, '/',$uri);
         
         $this->uri = $uri;
         
@@ -331,6 +353,7 @@ class Request
         if($m == "POST" && array_key_exists(self::$POST_METHOD, $_POST)) 
             $m = strtoupper($env['POST'][self::$POST_METHOD]);
         
+        echo "Request::uri is = {$uri}<br/>";
         echo "Request::method is = {$m}<br/>";
         
         $this->method = $m;
