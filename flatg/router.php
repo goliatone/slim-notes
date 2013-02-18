@@ -103,7 +103,9 @@ class Router {
     * If called multiple times
     */
     public function match($requestUrl, $requestMethod = 'GET') {
-         
+                     // echo "<pre>";
+        // echo print_r($this->namedRoutes);
+        // echo "</pre>";   
         foreach($this->routes as $route) {
             
             // compare server request method with route's allowed http methods
@@ -156,7 +158,7 @@ class Router {
         
         $route = $this->namedRoutes[$routeName];
         $url = $route->getUrl();
-
+        $url = str_replace(array('(', ')'), array('', ''), $url);
         // replace route url with given parameters
         if ($params && preg_match_all("/:(\w+)/", $url, $param_keys)) {
 

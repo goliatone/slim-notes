@@ -4,10 +4,10 @@
 <p>This is all folks! Nothing more, nothing less...or is it?!</p>
 
 <?php 
-$this->addPartial('footer', new View('footer', $this->data));
+//$this->addPartial('footer', new View('footer', $this->data));
 echo $this->getFilename();
 echo FlatG::version();
 ?>
 <pre>
-<?php echo FlatG::getView('footer', $data);?>
+<?php echo FlatG::renderView('footer', $data);?>
 </pre>

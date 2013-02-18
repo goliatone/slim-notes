@@ -79,7 +79,13 @@ class Route {
     }
 
     public function getRegex() {
-        return preg_replace_callback("/:(\w+)/", array(&$this, 'substituteFilter'), $this->url);
+        $expression = $this->url;
+        if (strpos($expression, '(') !== FALSE)
+        {
+            // Make optional parts of the URI non-capturing and optional
+            $expression = str_replace(array('(', ')'), array('(?:', ')?'), $expression);
+        }
+        return preg_replace_callback("/:(\w+)/", array(&$this, 'substituteFilter'), $expression);
     }
 
     private function substituteFilter($matches) {
