@@ -23,7 +23,8 @@ class DropboxDriver /*extends AnotherClass*/
         // spl_autoload_unregister(array('YiiBase','autoload'));
         spl_autoload_register(function($class) use($path){
             $class = str_replace('\\', '/', $class);
-            require_once($path.DIRECTORY_SEPARATOR.$class . '.php');
+            $path = realpath($path.DIRECTORY_SEPARATOR.$class . '.php');
+            require_once($path);
         });
         // spl_autoload_register(array('YiiBase','autoload'));
         
@@ -137,7 +138,12 @@ class DropboxDriver /*extends AnotherClass*/
                 //TODO: We can have the case were remote was just updated locally
                 //if we run it seguido.
                 $file = $this->service->getFile($remote->path, FALSE);
-                file_put_contents($path.DIRECTORY_SEPARATOR.$file['name'], $file['data']);
+                $path = ($path.DIRECTORY_SEPARATOR.$file['name']);
+                
+                $fh = fopen($myFile, 'w');
+                fwrite($fh, $file['data']);
+                fclose($fh);
+                // file_put_contents($path, $file['data']);
             }
         }
         

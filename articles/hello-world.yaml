@@ -3,7 +3,6 @@ title: Hello World
 slug: hello-world
 date: 2012-11-10
 tags: [pepe, pipo, pato]
-websites: [http://www.yaml.org, http://spyc.sourceforge.net]
 
 
 The library is under active development. API may change without notice.

@@ -1,10 +1,10 @@
 <?php 
-require_once 'router.php';
-require_once 'route.php';
-require_once 'view.php';
-require_once 'article_model.php';
-require_once 'vendors/spyc/Spyc.php';
-require_once("vendors/markdown/markdown.php");
+require_once('router.php');
+require_once('route.php');
+require_once('view.php');
+require_once('article_model.php');
+require_once('vendors/spyc/Spyc.php');
+require_once('vendors/markdown/markdown.php');
 
 class FlatG {
     
@@ -91,6 +91,36 @@ class FlatG {
         echo "FlatG v0.0.1";
     }
     
+    static public function synchronize()
+    {
+        
+        require_once ('backend/Storage.php');
+        
+        if(array_key_exists('default', self::$config['backend_storage']))
+        {
+            $backend_id = self::$config['backend_storage']['default']; 
+        }
+        
+        $config = self::$config['backend_storage'][ $backend_id ];
+        $config['vendor'] = $config['vendor'];
+        $config['output_path'] = self::$config['articles_path'];
+        
+        $storage = Storage::build($config);
+        
+        // $store
+        $files = $storage->listFiles();
+        echo $storage->totalFiles();
+        echo $storage->sync();
+        
+        // date_default_timezone_set('UTC');
+        // date_default_timezone_set($reset);
+        echo "<pre>Files listed<br/>";
+        print_r($files);
+    }
+    
+//////////////////////////////////////////////////////////////////
+////// MOVE TO HTML HELPER.
+//////////////////////////////////////////////////////////////////
     /**
      * Compiles an array of HTML attributes into an attribute string and
      * HTML escape it to prevent malformed (but not malicious) data.

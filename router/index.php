@@ -1,22 +1,57 @@
 <?php
 require '../flatg/flatg.php';
 
+//TODO: Header management, so we can take care of 304 and
+//all that good stuff.
+
 $path = pathinfo(__FILE__);
-        
+//TODO: We need to move index from router, and then 
+//handle/simplify all path management!! look into an 
+//autoloader. Also, could we manage this in a helper?!
 $config = array(
+    'base_path' => $path['dirname'],
     'view_dir' => $path['dirname']."/../theme/",
-    'articles_path' => $path['dirname']."/../articles/",
+    'articles_path' => $path['dirname']."/../articles",
     'asset_path' => "/slimG/assets/",
     'layout' => 'layout',
     'featured_article' => 'hello-world',
     'router' => array(
         'basePath' => '/slimG/router'
      ),
-     'base_url' => 'http://localhost/slimG/router/'
-    // 'basePath'
+    'base_url' => 'http://localhost/slimG/router/',
+    'backend_storage' =>array(
+        'default'=>'dropbox',
+        'dropbox'=>array(
+            // 'class' => $path['dirname'].'/backend/drivers/DropboxDriver.php',
+            'class' => '/Users/emilianoburgos/Development/www/slimG/flatg/backend/drivers/DropboxDriver.php',
+            'key'=>'ar4b6lf8yoawque',
+            'secret'=>'hpaz5357po75w2c',
+            'folder'=>'/',
+            'vendor'=> $path['dirname'].'/../flatg/vendors/dropbox'
+            
+        ),
+        'github'=>array(
+            'class' => $path['dirname'].'/backend/drivers/GithubDriver.php',
+            'key'=>'1122acbb27ae0b3681f0',
+            'secret'=>'742d37d943b14c7b23f86a4aa2328ce0ea07d7e3',
+            'repo'=>'https://github.com/goliatone/jii',
+            'branch'=>'gh-pages',
+            'vendor'=> $path['dirname'].'/../flatg/vendors/github-wrapper',
+            
+        ),
+    ),
 );
 
 FlatG::initialize($config);
+
+$sync_handler = function($params)
+{
+    //This is really all we have to do to sync.
+    //We should check headers, if ajax, return json with
+    //status. Else, html, render OK/KO status.
+    //Also, we should some how check for password?!!
+    FlatG::synchronize();
+};
 
 $article_handler = function($params){
     $params['articles'] = FlatG::$articles;

@@ -6,7 +6,12 @@ class Storage
     
     public static function build($config)
     {
-        $_DriverClass = Yii::import($config['class']);
+        // include_once($config['class']);
+        // include_once('/Users/emilianoburgos/Development/www/slimG/flatg/backend/drivers/DropboxDriver.php');
+        include_once($config['class']);
+        
+        $_DriverClass = rtrim( pathinfo($config['class'], PATHINFO_FILENAME), '.php');
+        // $_DriverClass = $_DriverClass['']; 
         $driver = new $_DriverClass($config);
         $driver->output_path = $config['output_path'];
         
