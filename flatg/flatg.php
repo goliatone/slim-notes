@@ -1,21 +1,42 @@
 <?php 
-require 'router.php';
-require 'route.php';
-require 'view.php';
+require_once 'router.php';
+require_once 'route.php';
+require_once 'view.php';
+require_once 'article_model.php';
+require_once 'vendors/spyc/Spyc.php';
+require_once("vendors/markdown/markdown.php");
 
 class FlatG {
     
     static public $config = array();
     
     static public $router;
+    static public $articles;
+    static public $markdown;
+    
     
     static public function initialize(&$config)
     {
         self::$config = $config;
         
+        ArticleModel::$parser = new Spyc();
+        ArticleModel::$path = $config['articles_path'];
+        self::$articles = ArticleModel::fetch( );
+        
+        
+   
+        $parser_class = MARKDOWN_PARSER_CLASS;
+        $parser = new $parser_class;
+        self::$markdown = $parser;
+        
         //TODO: make this for realz.
         self::$router = new Router();
         self::$router->setBasePath($config['router']['basePath']);
+    }
+    
+    static public function featuredArticle()
+    {
+        return self::$config['featured_article'];
     }
     
     static public function map($routeUrl, $target = '', array $args = array())
@@ -100,4 +121,79 @@ class FlatG {
         $args[1] = isset($args[1]) ? self::attr($args[1]) : '';
         return "<$tag{$args[1]}>{$args[0]}</$tag>\n";
     }
+}
+
+class GHelper 
+{
+    static public function merge_as_objects($source, $expand)
+    {
+        //We could also do a simple one liner...
+        // return (object) array_merge((array) $source, (array) $expand);
+        
+        if(is_array($expand)) $expand = self::array_to_object($expand);
+        if(is_array($source)) $source = self::array_to_object($source);
+        
+        foreach($expand as $k => $v) $source->$k = $v;
+        
+        return $source;
+    }
+    
+    /**
+     * 
+     */
+    static public function array_to_object($array, &$obj = FALSE)
+    {
+        
+        if(!$obj)
+            $obj = new stdClass();
+            
+        foreach ($array as $key => $value)
+        {
+            //TODO: Ensure $key has a valid format!
+            
+            if (is_array($value))
+            {
+                $obj->$key = new stdClass();
+                self::array_to_object($value, $obj->$key);
+            }
+            else
+            {
+                $obj->$key = $value;
+            }
+        }
+        return $obj;
+     }
+    
+    /**
+     * 
+     */
+    static public function appendFilenameToPath($source, $target)
+    {
+        $path_info = pathinfo($source);
+        $file_name = $path_info['filename'].'.'.$path_info['extension'];
+        return self::removeTrailingSlash($target, DS).DS.$file_name;   
+    }
+    
+    /**
+     * 
+     */
+    static public function removeTrailingSlash($path, $slash = '/')
+    {
+        return rtrim($path, $slash);
+    }
+
+    /**
+     * 
+     */
+    static public function removeFilesFromDir($path, $ext = 'png')
+    {
+        $path = self::removeTrailingSlash($path, DS).DS;
+        
+        $files = glob("{$path}*.{$ext}");
+        
+        foreach($files as $file)
+            @unlink($file);            
+     }
+    
+    
 }

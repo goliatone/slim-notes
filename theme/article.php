@@ -1,13 +1,5 @@
-<?php echo $name;?>
-<p>This is just some text, nothing more, nothing less.</p>
-<p>Here, we should actually display the real deal, noting more, nothing less.</p>
-<p>This is all folks! Nothing more, nothing less...or is it?!</p>
+<h3><?php echo $note->title?></h3>
+<span><?php echo $note->date;?></span>
 
-<?php 
-//$this->addPartial('footer', new View('footer', $this->data));
-echo $this->getFilename();
-echo FlatG::version();
-?>
-<pre>
-<?php echo FlatG::renderView('footer', $data);?>
-</pre>
+<?php /*echo $note->parsedContent()*/;?>
+<?php echo FlatG::$markdown->transform($note->content);?>
