@@ -21,7 +21,7 @@
 RewriteEngine On
 
 # Installation directory
-RewriteBase /slimg/router/
+RewriteBase /slimg/
 #RewriteBase /
 
 # Protect hidden files from being viewed

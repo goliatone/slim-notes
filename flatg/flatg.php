@@ -15,7 +15,8 @@ class FlatG {
     static public $markdown;
     
     
-    static public function initialize(&$config)
+    // static public function initialize(&$config)
+    static public function initialize($config)
     {
         self::$config = $config;
         

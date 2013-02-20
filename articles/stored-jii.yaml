@@ -3,7 +3,7 @@ title: Stored Jii, Dropbox
 slug: stored-jii-dropbox
 date: 2012-11-11
 tags: [code, php, yii]
-
+categories: [portfolio]
 
 Dropbox as a backend service for our flat file blog model.
 

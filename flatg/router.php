@@ -58,7 +58,6 @@ class Router {
         $route = new Route();
 
         $route->setUrl($this->basePath . $routeUrl);
-
         $route->setTarget($target);
 
         if(isset($args['methods']))
@@ -158,6 +157,8 @@ class Router {
         
         $route = $this->namedRoutes[$routeName];
         $url = $route->getUrl();
+        
+        
         $url = str_replace(array('(', ')'), array('', ''), $url);
         // replace route url with given parameters
         if ($params && preg_match_all("/:(\w+)/", $url, $param_keys)) {

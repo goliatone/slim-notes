@@ -14,6 +14,7 @@ class ArticleModel
     
     static public $articles;
     static public $path;
+    static public $indexed_meta = array();
     
     public $is_new = TRUE;
     public $_vo = array();
@@ -81,6 +82,8 @@ class ArticleModel
                 $model->is_new = FALSE;
                 $articles[$info['filename']] = $model;
                 
+                self::indexMeta($meta, $model);
+                
                 // $articles[$info['filename']] = $this->module->yaml->loadFile($path.DS.$file->getFileName()); ;
              }
         }
@@ -101,10 +104,62 @@ class ArticleModel
         foreach(self::$articles as $article)
         {
             if($article->$attribute === $value) return $article;
-            if($i === $index) $indexed = $article;
+            if($i++ === $index) $indexed = $article;
         }
         
         return $indexed;
+    }
+    
+    /**
+     * 
+     */
+    static public function findAllByMeta($meta_attribute, $value)
+    {
+        $out = array();
+        
+        foreach(self::$articles as $article)
+        {
+            if(!isset($article->{$meta_attribute})) continue;
+            
+            $meta = $article->{$meta_attribute};
+            
+            if(is_string($meta))
+            {
+                if($meta === $value) array_push($out, $article);
+            }
+            else if(is_array($meta) || is_object($meta))
+            {
+                foreach($meta as $m)
+                {
+                    if($m === $value) array_push($out, $article);
+                }
+            } 
+        }
+        
+        return $out;
+    }
+    
+    /**
+     * 
+     */
+    static public function indexMeta($metadata)
+    {
+        foreach($metadata as $meta => $content)
+        {
+            $value = $metadata[$meta];
+            //for now we only index collection of metas
+            if(is_string($value)) continue;
+            else if(is_array($value) || is_object($value))
+            {
+                foreach($value as $m)
+                {
+                    if(!isset(self::$indexed_meta[$m]))
+                        self::$indexed_meta[$m] = array();
+                    echo "$m is $content";
+                    array_push(self::$indexed_meta[$m], $content);
+                }
+            } 
+        }
     }
     
 }
