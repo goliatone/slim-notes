@@ -2,7 +2,16 @@
 
 class ArticleModel
 {
+    /**
+     * 
+     */
+    static public $CONTENT_DELIMETER = "\n\n";
+    
+    /**
+     * 
+     */
     static public $parser;
+    
     static public $articles;
     static public $path;
     
@@ -60,13 +69,13 @@ class ArticleModel
         $articles = array();
         foreach($dir as $file){
             if($file->isFile()){
-                $info = pathinfo($file->getBasename());
-                $handle  = fopen($path . '/' . $file->getFilename(), 'r');
+                $info    = pathinfo($file->getBasename());
+                $handle  = fopen($path.DIRECTORY_SEPARATOR.$file->getFilename(), 'r');
                 $content = stream_get_contents($handle);
-                $content = explode("\n\n", $content);
+                $content = explode(self::$CONTENT_DELIMETER, $content);
                 $rawMeta = array_shift($content);
                 $meta    = self::$parser->load($rawMeta);
-                $meta['content'] = implode("\n\n", $content);
+                $meta['content'] = implode(self::$CONTENT_DELIMETER, $content);
                 
                 $model = new ArticleModel($meta);
                 $model->is_new = FALSE;
