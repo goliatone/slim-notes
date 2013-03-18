@@ -149,7 +149,7 @@ $tags_handler = function($params){
     {
         $tags = $params['tag'];
         $params['articles'] = ArticleModel::findAllByMeta('tags', $tags);        
-    } else echo "we dont have a tags on params?<br/>";
+    }
     
     //we want to show all the tags.
     $params['tags'] = ArticleModel::$indexed_meta['tags'];

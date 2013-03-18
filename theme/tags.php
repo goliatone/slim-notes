@@ -15,7 +15,7 @@
 
 <ul>
 <?php foreach($tags as $t =>$related):
-    if($tag === $t) continue;
+    if(isset($tag) && $tag === $t) continue;
     ?>
     <li>
         <a href="<?php echo FlatG::$router->generate('tag', array('tag' => $t )) ;?>">
