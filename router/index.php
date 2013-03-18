@@ -156,7 +156,7 @@ FlatG::map('/archives(/:year((/:month)(/:day)))',
              )
         );
 
-FlatG::map('/tag/:tag',
+FlatG::map('/tag(/:tag)',
              $tag_handler, 
              array('methods' => 'GET', 
                    'name' => 'tag',

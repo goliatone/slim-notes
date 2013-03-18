@@ -80,6 +80,7 @@ class Route {
 
     public function getRegex() {
         $expression = $this->url;
+        // echo "Expression is: ".$this->url."<br/>";
         if (strpos($expression, '(') !== FALSE)
         {
             // Make optional parts of the URI non-capturing and optional

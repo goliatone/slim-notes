@@ -119,6 +119,13 @@ class FlatG {
         print_r($files);
     }
     
+    static public function dump($var)
+    {
+        echo "<pre>";
+        print_r($var);
+        echo "</pre>";
+    }
+    
 //////////////////////////////////////////////////////////////////
 ////// MOVE TO HTML HELPER.
 //////////////////////////////////////////////////////////////////

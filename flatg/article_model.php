@@ -15,6 +15,7 @@ class ArticleModel
     static public $articles;
     static public $path;
     static public $indexed_meta = array();
+    static public $indexable_metas = array('tags', 'categories','title', 'slug');
     
     public $is_new = TRUE;
     public $_vo = array();
@@ -142,24 +143,53 @@ class ArticleModel
     /**
      * 
      */
-    static public function indexMeta($metadata)
+    static public function indexMeta($metadata, $model)
     {
-        foreach($metadata as $meta => $content)
+        foreach($metadata as $meta => $meta_value)
         {
-            $value = $metadata[$meta];
+            //We only want to go over indexable metadata.
+            if(! in_array($meta, self::$indexable_metas)) continue;
+            
             //for now we only index collection of metas
-            if(is_string($value)) continue;
-            else if(is_array($value) || is_object($value))
+            if(is_string($meta_value))
             {
-                foreach($value as $m)
+                self::storeModelByMeta($meta, $meta_value, $model);
+            } 
+            else if(is_array($meta_value) || is_object($meta_value))
+            {
+                foreach($meta_value as $index => $meta_key)
                 {
-                    if(!isset(self::$indexed_meta[$m]))
-                        self::$indexed_meta[$m] = array();
-                    echo "$m is $content";
-                    array_push(self::$indexed_meta[$m], $content);
+                    self::storeModelByMeta($meta, $meta_key, $model);
                 }
             } 
         }
+    }
+    
+    static public function storeModelByMeta($meta, $meta_value, $model)
+    {
+        if(!isset(self::$indexed_meta[$meta]))
+            self::$indexed_meta[$meta] = array();
+        
+        if(!isset(self::$indexed_meta[$meta][$meta_value]))
+            self::$indexed_meta[$meta][$meta_value] = array();
+        
+        array_push(self::$indexed_meta[$meta][$meta_value], $model);
+    }
+    
+    /**
+     * 
+     */
+    static public function sortByDate($articles)
+    {
+        $results    = array();
+        foreach($articles as $article){
+            $date = new DateTime($article->date);
+            $timestamp = $date->getTimestamp();
+            $timestamp = array_key_exists($timestamp, $results) ? $timestamp + 1 : $timestamp;
+            $results[$timestamp] = $article;
+        }
+        krsort($results);
+        return $results;
     }
     
 }

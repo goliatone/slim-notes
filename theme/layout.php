@@ -48,9 +48,9 @@
             </ul>
             <section>
                 <ul class="left">
-                    <li><a href="<?php echo FlatG::$router->generate('tag', array('tag' => 'yotomanager' )) ;?>">Tags</a></li>
-                    <li><a href="<?php echo FlatG::$router->generate('category', array('category' => 'yotomanager' )) ;?>">Categories</a></li>
-                    <li><a href="<?php echo FlatG::$router->generate('archives', array('year' => '2013', 'month'=>'03', 'day'=>'17' )) ;?>">Archives</a></li>
+                    <li><a href="<?php echo FlatG::$router->generate('tag'/*, array('tag' => '' )*/) ;?>">Tags</a></li>
+                    <li><a href="<?php echo FlatG::$router->generate('category'/*, array('category' => '' )*/) ;?>">Categories</a></li>
+                    <li><a href="<?php echo FlatG::$router->generate('archives'/*, array('year' => '2013', 'month'=>'03', 'day'=>'17' )*/) ;?>">Archives</a></li>
                 </ul> 
                 <ul class="right">
                     <li class="has-dropdown">

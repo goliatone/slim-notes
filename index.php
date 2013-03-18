@@ -126,7 +126,8 @@ $archives_handler = function($params){
     }
     else
     {
-       $archives = $articles;
+        //         
+        $archives = ArticleModel::sortByDate($articles);
     }
     
     $params['archives'] = $archives;
@@ -151,7 +152,9 @@ $tags_handler = function($params){
     } else echo "we dont have a tags on params?<br/>";
     
     //we want to show all the tags.
-    // $param['tags'] = ArticleModel::$indexed_meta['tags'];
+    $params['tags'] = ArticleModel::$indexed_meta['tags'];
+    // FlatG::dump(ArticleModel::$indexed_meta);
+    
     
     FlatG::render('tags', $params);
 };
@@ -169,12 +172,12 @@ FlatG::map('/archives(/:year((/:month)(/:day)))',
              )
         );
 
-FlatG::map('/tags/:tag',
+FlatG::map('/tags(/:tag)',
              $tags_handler, 
              array('name' => 'tag')
         );
         
-FlatG::map('/category/:category', 
+FlatG::map('/category(/:category)', 
              $category_handler, 
              array('name' => 'category')
           );
@@ -185,7 +188,13 @@ FlatG::map('/note/:slug',
                     'filters' => array( 'slug' => '(.*)')
              )
           );
-
+FlatG::map('/:slug', 
+            $article_handler, 
+            array( 'name'=>'page',
+                'filters' => array( 'slug' => '(.*)')
+            )
+          );
+          
 FlatG::run();
 
 ?>

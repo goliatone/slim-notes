@@ -70,10 +70,8 @@ class Router {
 
         if(isset($args['name'])) {
             $route_name = $args['name'];
-            // echo "<p>We have route {$route_name}</p>";
             $route->setName($route_name);
             if (!isset($this->namedRoutes[$route_name])) {
-                // echo "<p>We are storing route {$route_name}</p>";
                 $this->namedRoutes[$route_name] = $route;
             }
         }
@@ -89,7 +87,8 @@ class Router {
         $requestUrl = $_SERVER['REQUEST_URI'];
 
         // strip GET variables from URL
-        if(($pos = strpos($requestUrl, '?')) !== false) {
+        if(($pos = strpos($requestUrl, '?')) !== false) 
+        {
             $requestUrl =  substr($requestUrl, 0, $pos);
         }
 
@@ -102,17 +101,14 @@ class Router {
     * If called multiple times
     */
     public function match($requestUrl, $requestMethod = 'GET') {
-                     // echo "<pre>";
-        // echo print_r($this->namedRoutes);
-        // echo "</pre>";   
         foreach($this->routes as $route) {
-            
             // compare server request method with route's allowed http methods
             if(!in_array($requestMethod, $route->getMethods())) continue;
 
             // check if request url matches route regex. if not, return false.
             if (!preg_match("@^".$route->getRegex()."*$@i", $requestUrl, $matches)) continue;
 
+            
             $params = array();
 
             if (preg_match_all("/:([\w-]+)/", $route->getUrl(), $argument_keys)) {
@@ -147,10 +143,6 @@ class Router {
      * @return string The url to the route
      */
     public function generate($routeName, array $params = array()) {
-        // echo "<pre>";
-        // echo print_r($this->namedRoutes);
-        // echo "</pre>";
-        
         // Check if route exists
         if (!isset($this->namedRoutes[$routeName]))            
             throw new Exception("No route with the name $routeName has been found.");
@@ -172,7 +164,13 @@ class Router {
                     $url = preg_replace("/:(\w+)/", $params[$key], $url, 1);
             }
         }
-
+    
+        //we should make sure we dont have any :w left, if we do
+        //everything after that is kk.
+        //TODO: Make this for realz!
+        if (strpos($url,':') !== false)
+            $url = strstr($url, ':', true);
+        
         return $url;
     }
 
