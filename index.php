@@ -159,8 +159,17 @@ $tags_handler = function($params){
     FlatG::render('tags', $params);
 };
 
+FlatG::map('/admin/sync', 
+            $sync_handler, 
+            array( 'name'=>'sync'
+            )
+          );
+
+//ADD ROUTES AND HANDLERS.
+//Home Route.
 FlatG::map('/', $index_handler , array('methods' => 'GET', 'name'=>'home'));
 
+//Archives Route.
 FlatG::map('/archives(/:year((/:month)(/:day)))',
              $archives_handler, 
              array('name' => 'archives',
@@ -171,32 +180,34 @@ FlatG::map('/archives(/:year((/:month)(/:day)))',
                                      )
              )
         );
-
+        
+//Tags Route.
 FlatG::map('/tags(/:tag)',
              $tags_handler, 
              array('name' => 'tag')
         );
-        
+
+//Category Route.        
 FlatG::map('/category(/:category)', 
              $category_handler, 
              array('name' => 'category')
           );
-             
+
+//Note Route.           
 FlatG::map('/note/:slug', 
              $article_handler, 
              array( 'name'=>'note',
                     'filters' => array( 'slug' => '(.*)')
              )
           );
+          
+//Page Route.
 FlatG::map('/:slug', 
             $article_handler, 
             array( 'name'=>'page',
                 'filters' => array( 'slug' => '(.*)')
             )
           );
-          
+
+//Let's fire this BadBoy :)   
 FlatG::run();
-
-?>
-
-   
