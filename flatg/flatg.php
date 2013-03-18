@@ -29,6 +29,7 @@ class FlatG {
         
         ArticleModel::$parser = new Spyc();
         ArticleModel::$path = $config['articles_path'];
+        ArticleModel::$file_extension = $config['articles_extension']; 
         self::$articles = ArticleModel::fetch( );
         
         

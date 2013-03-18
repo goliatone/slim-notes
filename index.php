@@ -11,6 +11,7 @@ $path = pathinfo(__FILE__);
 $config = array(
     'base_path' => $path['dirname'],
     'view_dir' => $path['dirname']."/theme/",
+    'articles_extension' =>'yaml',
     'articles_path' => $path['dirname']."/articles",
     'asset_path' => "/slimG/assets/",
     'layout' => 'layout',
@@ -26,7 +27,7 @@ $config = array(
             'class' => $path['dirname'].'/flatg/backend/drivers/DropboxDriver.php',
             'key'=>'ar4b6lf8yoawque',
             'secret'=>'hpaz5357po75w2c',
-            'folder'=>'/',
+            'folder'=>'/articles/',
             'vendor'=> $path['dirname'].'/flatg/vendors/dropbox'
             
         ),
@@ -209,7 +210,6 @@ FlatG::map('/:slug',
             )
           );
 
-FlatG::synchronize();
 //Let's fire this BadBoy :)   
 FlatG::run();
 

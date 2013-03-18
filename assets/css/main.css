@@ -1,0 +1,19 @@
+/* Will be compiled down to a single stylesheet with your sass files */
+
+/**********************************************
+// STRUCTURE
+***********************************************/
+header {
+	min-height: 350px;
+	background-color: #232323;
+	border-bottom: solid 1px #121212;
+	color:#fff;
+	/*margin-bottom: -30px;*/
+}
+
+.hero {
+	padding-top: 30px;
+}
+.hero h1 {
+	color:#fff;
+}

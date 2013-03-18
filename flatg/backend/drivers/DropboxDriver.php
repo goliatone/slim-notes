@@ -11,6 +11,7 @@ class DropboxDriver /*extends AnotherClass*/
     public $filesMeta;
     public $output_path;
     
+    //TODO: Move to config!
     public $file_extension = 'yaml';
     
 	public function __construct($config) {
@@ -28,6 +29,8 @@ class DropboxDriver /*extends AnotherClass*/
         });
         // spl_autoload_register(array('YiiBase','autoload'));
         
+        $this->folder = (empty($config['folder']) ? '/' : $config['folder']);
+        
         $key      = $config['key'];
         $secret   = $config['secret'];
         $protocol = (!empty($_SERVER['HTTPS'])) ? 'https' : 'http';
@@ -42,11 +45,15 @@ class DropboxDriver /*extends AnotherClass*/
         
     }
     
-    public function listFiles($refresh = FALSE)
+    public function listFiles($refresh = FALSE, $path = FALSE)
     {
         if(isset($this->files) && ! $refresh) return $this->files;
         
-        $meta = $this->service->metaData();
+        if(! $path)
+            $path = $this->folder;
+        
+        //The path to the file/folder, relative to root
+        $meta = $this->service->metaData($path);
         
         $this->filesMeta = $meta['body']->contents;
         $this->files = array();
@@ -62,13 +69,13 @@ class DropboxDriver /*extends AnotherClass*/
     
     public function totalFiles()
     {
-        if(! isset($this->filesMeta)) $this->listFiles;
+        if(! isset($this->filesMeta)) $this->listFiles();
         return count($this->files);
     }
     
     /**
      * md5_file
-     * 
+     * TODO: Use dropbox delta API!!!
      */
     public function sync($local = TRUE)
     {
@@ -156,12 +163,12 @@ class DropboxDriver /*extends AnotherClass*/
             }
         }
         
-        //if remote file does not exist, pull.
+        //if remote file does not exist, push.
         if(isset($push_to_store))
         { 
             foreach($push_to_store as $local)
             {
-                $this->service->putFile($local['path'], $local['name']);
+                $this->service->putFile($local['path'], $local['name'], $this->folder);
             }
         }
         
