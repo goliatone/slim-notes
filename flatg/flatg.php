@@ -19,7 +19,10 @@ class FlatG {
     static public $markdown;
     
     
-    // static public function initialize(&$config)
+    /**
+     * 
+     * @param Array     $config Holds configuration values.
+     */
     static public function initialize($config)
     {
         self::$config = $config;
@@ -29,7 +32,7 @@ class FlatG {
         self::$articles = ArticleModel::fetch( );
         
         
-   
+        //Add markdown support.
         $parser_class = MARKDOWN_PARSER_CLASS;
         $parser = new $parser_class;
         self::$markdown = $parser;
@@ -39,17 +42,32 @@ class FlatG {
         self::$router->setBasePath($config['router']['basePath']);
     }
     
+    /**
+     * Convinience method to access featured article.
+     * TODO: How do we set this, manage? From metadata?!
+     * 
+     * @return string Slug of featured ArticleModel
+     */
     static public function featuredArticle()
     {
         return self::$config['featured_article'];
     }
     
+    /**
+     * 
+     * @param string    $routeUrl
+     * @param mixed     $target
+     * @param array     $args
+     */
     static public function map($routeUrl, $target = '', array $args = array())
     {
         self::$router->map($routeUrl, $target, $args);
         return self::$router;
     }
     
+    /**
+     * 
+     */
     static public function run()
     {
         $route = FlatG::$router->matchCurrentRequest();
@@ -64,6 +82,9 @@ class FlatG {
         }
     }
     
+    /**
+     * 
+     */
     static public function render($name, $data, $layout = FALSE, $return = FALSE)
     {
         //get main content.
@@ -77,6 +98,9 @@ class FlatG {
         else echo $output;
     }
     
+    /**
+     * 
+     */
     static public function renderView($name, $data)
     {
         $dir  = self::$config['view_dir'];
@@ -86,11 +110,17 @@ class FlatG {
         return $view->render($data);
     }
     
+    /**
+     * 
+     */
     static public function assetUri($asset)
     {
         echo self::$config['asset_path'].$asset;
     }
     
+    /**
+     * 
+     */
     static public function version($link = TRUE)
     {
         if($link) 
@@ -99,6 +129,9 @@ class FlatG {
         return G_VERSION;
     }
     
+    /**
+     * 
+     */
     static public function synchronize()
     {
         
@@ -110,7 +143,7 @@ class FlatG {
         }
         
         $config = self::$config['backend_storage'][ $backend_id ];
-        $config['vendor'] = $config['vendor'];
+        // $config['vendor'] = $config['vendor'];
         $config['output_path'] = self::$config['articles_path'];
         
         $storage = Storage::build($config);

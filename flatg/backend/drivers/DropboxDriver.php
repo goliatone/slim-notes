@@ -128,6 +128,9 @@ class DropboxDriver /*extends AnotherClass*/
             if(file_exists($path.$remote->path)) continue;
             $pull_from_store[] = $remote;
         }
+        echo "<pre>PULL FROM STORE";
+        print_r($pull_from_store);
+        echo "</pre>";
         
         //if we have files to pull, do so.
         if(isset($pull_from_store))
@@ -138,12 +141,18 @@ class DropboxDriver /*extends AnotherClass*/
                 //TODO: We can have the case were remote was just updated locally
                 //if we run it seguido.
                 $file = $this->service->getFile($remote->path, FALSE);
-                $path = ($path.DIRECTORY_SEPARATOR.$file['name']);
-                
-                $fh = fopen($myFile, 'w');
+                $file_name = $path.DIRECTORY_SEPARATOR.$file['name'];
+                /*
+                $fh = fopen($path, 'w');
                 fwrite($fh, $file['data']);
                 fclose($fh);
-                // file_put_contents($path, $file['data']);
+                */
+                
+                file_put_contents($file_name, $file['data']);
+                
+                //TODO: Check for debug environment.
+                //We have this so we can locally edit the file...
+                chmod($file_name, 0664);
             }
         }
         
@@ -163,10 +172,12 @@ class DropboxDriver /*extends AnotherClass*/
             {
                 $file = $this->service->getFile($remote->path, FALSE);
                 $remote_content = $file['data'];
-                $local_content  = file_get_contents($path.DIRECTORY_SEPARATOR.$file['name']);
+                $file_name = $path.DIRECTORY_SEPARATOR.$file['name'];
+                // $file_name = $path;
+                $local_content  = file_get_contents($file_name);
                 //we only update if the content is different.
                 if($remote_content === $local_content) continue;
-                file_put_contents($path.DIRECTORY_SEPARATOR.$file['name'], $remote_content );
+                file_put_contents($file_name, $remote_content );
             }
         }
     }

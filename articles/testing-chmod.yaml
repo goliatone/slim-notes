@@ -1,11 +1,12 @@
 --- 
-title: Testing Dropbox Store!!!
-slug: testing-dropbox-store
-date: 2012-11-13
-tags: [code, php, yii]
+title: Testing Chmod
+slug: testing-sync-chmod
+date: 2013-03-17
+tag: [code, php, yii]
+categories: [beta, test, testing]
 
 
-##Hello Dropbox!
+###Hello Testing chmod :)
 This is just here to make sure that we can actually make it so that the app stores its shait on different backend services, being dropbox and github.
 Also, its just a test, so do not make anything out of it.
 <a class="btn btn-notice" href="/">This is a cool btn</a>

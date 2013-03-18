@@ -23,7 +23,7 @@ $config = array(
         'default'=>'dropbox',
         'dropbox'=>array(
             // 'class' => $path['dirname'].'/backend/drivers/DropboxDriver.php',
-            'class' => $path['dirname'].'/backend/drivers/DropboxDriver.php',
+            'class' => $path['dirname'].'/flatg/backend/drivers/DropboxDriver.php',
             'key'=>'ar4b6lf8yoawque',
             'secret'=>'hpaz5357po75w2c',
             'folder'=>'/',
@@ -209,5 +209,7 @@ FlatG::map('/:slug',
             )
           );
 
+FlatG::synchronize();
 //Let's fire this BadBoy :)   
 FlatG::run();
+
