@@ -6,6 +6,10 @@ require_once('article_model.php');
 require_once('vendors/spyc/Spyc.php');
 require_once('vendors/markdown/markdown.php');
 
+
+define('G_VERSION',"FlatG v0.0.1");
+define('G_LINK', 'http://goliatone.com');
+
 class FlatG {
     
     static public $config = array();
@@ -87,9 +91,12 @@ class FlatG {
         echo self::$config['asset_path'].$asset;
     }
     
-    static public function version()
+    static public function version($link = TRUE)
     {
-        echo "FlatG v0.0.1";
+        if($link) 
+            return "<a href='".G_LINK."'>".G_VERSION."</a>";
+        
+        return G_VERSION;
     }
     
     static public function synchronize()
