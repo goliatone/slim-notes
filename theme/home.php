@@ -8,7 +8,7 @@
     if(isset($note->tags)):
 ?>
 <br/>
-<?php foreach($note->tags as $tag) echo  FlatG::a(FlatG::b($tag), array( 'href' => FlatG::$config['base_url'].'tag/'.$tag)).' ';?>
+<?php foreach($note->tags as $tag) echo  FlatG::a(FlatG::b($tag), array( 'href' => FlatG::$config['base_url'].'tags/'.$tag)).' ';?>
 <?php endif;?>
 
 <?php /*echo $note->parsedContent()*/;?>
