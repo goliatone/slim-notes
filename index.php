@@ -162,9 +162,51 @@ $tags_handler = function($params){
     FlatG::render('tags', $params);
 };
 
+/***********************************************
+ * ADMIN: trigger sync.
+ * TODO: We should take a secret key.
+ **********************************************/
+$sync_handler = function($params)
+{
+    //This is really all we have to do to sync.
+    //We should check headers, if ajax, return json with
+    //status. Else, html, render OK/KO status.
+    //Also, we should some how check for password?!!
+    FlatG::synchronize();
+};
+
 FlatG::map('/admin/sync', 
             $sync_handler, 
             array( 'name'=>'sync'
+            )
+          );
+/***********************************************
+ * API
+ **********************************************/
+$api_article_handler = function($params){
+    $slug = $params['slug'];
+    $file = ArticleModel::findBy('slug',$slug, 0);     
+    $note = new ArticleModel($file);
+    header('Content-Type: application/json');
+    echo json_encode($note); 
+};
+FlatG::map('/api/note/:slug', 
+           $api_article_handler, 
+           array( 'name'=>'api.note.get',
+                  'filters' => array( 'slug' => '(.*)')
+           )
+);
+$api_index_handler = function($params){
+    $params['count'] = count(FlatG::$articles);
+    $params['notes'] = FlatG::$articles;
+    header('Content-Type: application/json');
+    echo json_encode($params); 
+};
+
+FlatG::map('/api/notes', 
+            $api_index_handler, 
+            array( 'name'=>'api.notes.get',
+                   'methods'=> 'GET'
             )
           );
 

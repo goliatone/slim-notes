@@ -20,8 +20,8 @@ class ArticleModel
     static public $file_extension;
     
     
-    public $is_new = TRUE;
-    public $_vo = array();
+    private $_is_new = TRUE;
+    private $_vo = array();
     
     static public function build($vo = array(), $template = array())
     {
@@ -63,7 +63,7 @@ class ArticleModel
     
     public function isNewRecord()
     {
-        return $this->is_new;
+        return $this->_is_new;
     }
     
     static public function fetch($path = FALSE)
@@ -87,7 +87,7 @@ class ArticleModel
                 $meta['content'] = ltrim(implode(self::$CONTENT_DELIMETER, $content));
                 
                 $model = new ArticleModel($meta);
-                $model->is_new = FALSE;
+                $model->_is_new = FALSE;
                 $articles[$info['filename']] = $model;
                 
                 self::indexMeta($meta, $model);
