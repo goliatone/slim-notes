@@ -79,6 +79,14 @@ class DropboxDriver /*extends AnotherClass*/
      */
     public function sync($local = TRUE)
     {
+        /*
+        $response = $this->service->delta();
+        
+        echo "<p>This is some delta stuff.</p><pre><br/>";
+        print_r($response);
+        echo "</pre><p>--------------------------</p><br/>";
+        */
+        
         //make sure we have the file list.
         $this->listFiles();
         
