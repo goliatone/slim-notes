@@ -165,6 +165,7 @@ $tags_handler = function($params){
 /***********************************************
  * ADMIN: trigger sync.
  * TODO: We should take a secret key.
+ *       https://github.com/fkooman/php-simple-auth/
  **********************************************/
 $sync_handler = function($params)
 {
@@ -182,13 +183,16 @@ FlatG::map('/admin/sync',
           );
 /***********************************************
  * API
+ * http://phpmaster.com/creating-a-php-oauth-server/
+ * https://code.google.com/p/oauth-php/
  **********************************************/
 $api_article_handler = function($params){
     $slug = $params['slug'];
     $file = ArticleModel::findBy('slug',$slug, 0);     
     $note = new ArticleModel($file);
-    header('Content-Type: application/json');
-    echo json_encode($note); 
+    
+    FlatG::renderJSON($note);
+    
 };
 FlatG::map('/api/note/:slug', 
            $api_article_handler, 
@@ -199,8 +203,8 @@ FlatG::map('/api/note/:slug',
 $api_index_handler = function($params){
     $params['count'] = count(FlatG::$articles);
     $params['notes'] = FlatG::$articles;
-    header('Content-Type: application/json');
-    echo json_encode($params); 
+    
+    FlatG::renderJSON($params);
 };
 
 FlatG::map('/api/notes', 

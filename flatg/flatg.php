@@ -102,6 +102,24 @@ class FlatG {
     /**
      * 
      */
+    static public function renderJSON($data)
+    {
+        
+        if(array_key_exists('callback', $_REQUEST))
+        {
+            header('Content-Type: application/javascript');
+            echo $_REQUEST['callback'].'('.json_encode($data).')'; 
+        }
+        else 
+        {
+            header('Content-Type: application/json');
+            echo json_encode($data); 
+        } 
+    }
+    
+    /**
+     * 
+     */
     static public function renderView($name, $data)
     {
         $dir  = self::$config['view_dir'];
