@@ -25,16 +25,16 @@ $config = array(
         'dropbox'=>array(
             // 'class' => $path['dirname'].'/backend/drivers/DropboxDriver.php',
             'class' => $path['dirname'].'/flatg/backend/drivers/DropboxDriver.php',
-            'key'=>'ar4b6lf8yoawque',
-            'secret'=>'hpaz5357po75w2c',
+            'key'=>'xxxxxxxxxxxxx',
+            'secret'=>'xxxxxxxxxxxxx',
             'folder'=>'/articles/',
             'vendor'=> $path['dirname'].'/flatg/vendors/dropbox'
             
         ),
         'github'=>array(
             'class' => $path['dirname'].'/backend/drivers/GithubDriver.php',
-            'key'=>'1122acbb27ae0b3681f0',
-            'secret'=>'742d37d943b14c7b23f86a4aa2328ce0ea07d7e3',
+            'key'=>'xxxxxxxxxxxxx',
+            'secret'=>'xxxxxxxxxxxxx',
             'repo'=>'https://github.com/goliatone/jii',
             'branch'=>'gh-pages',
             'vendor'=> $path['dirname'].'/flatg/vendors/github-wrapper',
