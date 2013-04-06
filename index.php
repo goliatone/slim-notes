@@ -1,6 +1,8 @@
 <?php
 require 'flatg/flatg.php';
 
+$passwords = require('config/settings.php');
+
 //TODO: Header management, so we can take care of 304 and
 //all that good stuff.
 
@@ -25,16 +27,16 @@ $config = array(
         'dropbox'=>array(
             // 'class' => $path['dirname'].'/backend/drivers/DropboxDriver.php',
             'class' => $path['dirname'].'/flatg/backend/drivers/DropboxDriver.php',
-            'key'=>'xxxxxxxxxxxxx',
-            'secret'=>'xxxxxxxxxxxxx',
+            'key'=>$passwords['dropbox']['key'],
+            'secret'=>$passwords['dropbox']['secret'],
             'folder'=>'/articles/',
             'vendor'=> $path['dirname'].'/flatg/vendors/dropbox'
             
         ),
         'github'=>array(
             'class' => $path['dirname'].'/backend/drivers/GithubDriver.php',
-            'key'=>'xxxxxxxxxxxxx',
-            'secret'=>'xxxxxxxxxxxxx',
+            'key'=>$passwords['github']['key'],
+            'secret'=>$passwords['github']['secret'],
             'repo'=>'https://github.com/goliatone/jii',
             'branch'=>'gh-pages',
             'vendor'=> $path['dirname'].'/flatg/vendors/github-wrapper',
