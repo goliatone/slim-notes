@@ -21,6 +21,7 @@ class ArticleModel
     
     
     private $_is_new = TRUE;
+    private $_file_name;
     private $_vo = array();
     
     static public function build($vo = array(), $template = array())
@@ -66,6 +67,11 @@ class ArticleModel
         return $this->_is_new;
     }
     
+    public function getFilename()
+    {
+        return $this->_file_name;
+    }
+    
     static public function fetch($path = FALSE)
     {
         if(!$path) $path = self::$path;
@@ -88,6 +94,7 @@ class ArticleModel
                 
                 $model = new ArticleModel($meta);
                 $model->_is_new = FALSE;
+                $model->_file_name = $file->getFilename();
                 $articles[$info['filename']] = $model;
                 
                 self::indexMeta($meta, $model);

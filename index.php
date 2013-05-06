@@ -13,6 +13,7 @@ $path = pathinfo(__FILE__);
 $config = array(
     'base_path' => $path['dirname'],
     'view_dir' => $path['dirname']."/theme/",
+    'theme' => 'gone',
     'articles_extension' =>'yaml',
     'articles_path' => $path['dirname']."/articles",
     'asset_path' => "/slimG/assets/",
@@ -25,7 +26,6 @@ $config = array(
     'backend_storage' =>array(
         'default'=>'dropbox',
         'dropbox'=>array(
-            // 'class' => $path['dirname'].'/backend/drivers/DropboxDriver.php',
             'class' => $path['dirname'].'/flatg/backend/drivers/DropboxDriver.php',
             'key'=>$passwords['dropbox']['key'],
             'secret'=>$passwords['dropbox']['secret'],
@@ -202,8 +202,18 @@ FlatG::map('/api/note/:slug',
 );
 $api_index_handler = function($params){
     $params['count'] = count(FlatG::$articles);
-    $params['notes'] = FlatG::$articles;
+    $output = array();
     
+    foreach(FlatG::$articles as $slug => $model )
+    {
+        $note = new stdClass();
+        $note->title = $model->title;
+        $note->slug = $model->slug;
+        $note->date = $model->date;
+        $note->file = $model->getFilename();
+        $output[] = $note;
+    }
+    $params['notes'] = $output;
     FlatG::renderJSON($params);
 };
 
@@ -213,7 +223,19 @@ FlatG::map('/api/notes',
                    'methods'=> 'GET'
             )
           );
+$api_notes_full_handler = function($params){
+    $params['count'] = count(FlatG::$articles);
+    $params['notes'] = FlatG::$articles;
+    
+    FlatG::renderJSON($params);
+};
 
+FlatG::map('/api/notes/all', 
+            $api_notes_full_handler, 
+            array( 'name'=>'api.notes.get',
+                   'methods'=> 'GET'
+            )
+          );
 //ADD ROUTES AND HANDLERS.
 //Home Route.
 FlatG::map('/', $index_handler , array('methods' => 'GET', 'name'=>'home'));

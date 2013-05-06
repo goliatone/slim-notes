@@ -10,6 +10,9 @@ require_once('vendors/markdown/markdown.php');
 define('G_VERSION',"FlatG v0.0.1");
 define('G_LINK', 'http://goliatone.com');
 
+/**
+ * 
+ */
 class FlatG {
     
     static public $config = array();
@@ -122,11 +125,19 @@ class FlatG {
      */
     static public function renderView($name, $data)
     {
-        $dir  = self::$config['view_dir'];
+        $dir  = self::get_theme_dir();
         $view = new View($name);
         $view->setViewDirectory($dir);
         
         return $view->render($data);
+    }
+    
+    /**
+     * 
+     */
+    static public function get_theme_dir()
+    {
+        return self::$config['view_dir'].DIRECTORY_SEPARATOR.self::$config['theme'];
     }
     
     /**

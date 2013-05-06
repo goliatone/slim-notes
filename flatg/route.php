@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * 
+ */
 class Route {
     
     /**
@@ -73,11 +75,17 @@ class Route {
     public function setName($name) {
         $this->name = (string) $name;
     }
-
+    
+    /**
+     * 
+     */
     public function setFilters(array $filters) {
         $this->filters = $filters;
     }
-
+    
+    /**
+     * 
+     */
     public function getRegex() {
         $expression = $this->url;
         // echo "Expression is: ".$this->url."<br/>";
@@ -88,7 +96,10 @@ class Route {
         }
         return preg_replace_callback("/:(\w+)/", array(&$this, 'substituteFilter'), $expression);
     }
-
+    
+    /**
+     * 
+     */
     private function substituteFilter($matches) {
         if (isset($matches[1]) && isset($this->filters[$matches[1]])) {
                 return $this->filters[$matches[1]];
@@ -97,9 +108,13 @@ class Route {
             return "([\w-]+)";
     }
     
-    
+    /**
+     * 
+     */
     public function getParameters() { return $this->parameters; }
-
+    /**
+     * 
+     */
     public function setParameters(array $parameters) {
         $this->parameters = $parameters;
     }
