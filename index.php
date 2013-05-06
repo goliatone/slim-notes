@@ -1,49 +1,12 @@
 <?php
+/*
+ * TODO: Header management, so we can take care of 304 and
+ *       all that good stuff.
+ */
+
 require 'flatg/flatg.php';
 
-$passwords = require('config/settings.php');
-
-//TODO: Header management, so we can take care of 304 and
-//all that good stuff.
-
-$path = pathinfo(__FILE__);
-//TODO: We need to move index from router, and then 
-//handle/simplify all path management!! look into an 
-//autoloader. Also, could we manage this in a helper?!
-$config = array(
-    'base_path' => $path['dirname'],
-    'view_dir' => $path['dirname']."/themes/",
-    'theme' => 'gone',
-    'articles_extension' =>'yaml',
-    'articles_path' => $path['dirname']."/articles",
-    'asset_path' => "/slimG/assets/",
-    'layout' => 'layout',
-    'featured_article' => 'hello-world',
-    'router' => array(
-        'basePath' => '/slimG'
-     ),
-    'base_url' => 'http://localhost/slimG/',
-    'backend_storage' =>array(
-        'default'=>'dropbox',
-        'dropbox'=>array(
-            'class' => $path['dirname'].'/flatg/backend/drivers/DropboxDriver.php',
-            'key'=>$passwords['dropbox']['key'],
-            'secret'=>$passwords['dropbox']['secret'],
-            'folder'=>'/articles/',
-            'vendor'=> $path['dirname'].'/flatg/vendors/dropbox'
-            
-        ),
-        'github'=>array(
-            'class' => $path['dirname'].'/backend/drivers/GithubDriver.php',
-            'key'=>$passwords['github']['key'],
-            'secret'=>$passwords['github']['secret'],
-            'repo'=>'https://github.com/goliatone/jii',
-            'branch'=>'gh-pages',
-            'vendor'=> $path['dirname'].'/flatg/vendors/github-wrapper',
-            
-        ),
-    ),
-);
+$config = require('config/main.php');
 
 FlatG::initialize($config);
 
