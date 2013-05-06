@@ -12,7 +12,7 @@ $path = pathinfo(__FILE__);
 //autoloader. Also, could we manage this in a helper?!
 $config = array(
     'base_path' => $path['dirname'],
-    'view_dir' => $path['dirname']."/theme/",
+    'view_dir' => $path['dirname']."/themes/",
     'theme' => 'gone',
     'articles_extension' =>'yaml',
     'articles_path' => $path['dirname']."/articles",
