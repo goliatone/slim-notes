@@ -1,13 +1,12 @@
 <?php
-
-$passwords = require('./settings.php');
-
-
 //TODO: Move this to FlatG::get_base_path(); So we have global access
 //and we dont polute this. Also, make a FlatG::import('path') so we can cache and 
 //encapsulate logic...
-$path = pathinfo(__FILE__);
-$path = realpath($path['dirname'].DIRECTORY_SEPARATOR.'..');
+$dirpath = dirname(__FILE__).DIRECTORY_SEPARATOR;
+
+$path = realpath($dirpath.'..');
+$passwords = require($dirpath.'settings.php');
+
 
 //TODO: We need to move index from router, and then 
 //handle/simplify all path management!! look into an 

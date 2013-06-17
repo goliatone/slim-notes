@@ -123,6 +123,16 @@ class FlatG {
     /**
      * 
      */
+    static public function isAJAX()
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    }
+    
+    
+    /**
+     * 
+     */
     static public function renderView($name, $data)
     {
         $dir  = self::get_theme_dir();
